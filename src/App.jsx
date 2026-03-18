@@ -43,7 +43,7 @@ function getNextThursday() {
 
 export default function App() {
   const { user } = useAuth()
-  const [targetDate] = useState(() => new Date(2026, 2, 26, 20, 0, 0, 0))
+  const [targetDate] = useState(() => new Date(2026, 6, 17, 20, 0, 0, 0))
   const [showLogin, setShowLogin] = useState(false)
 
   if (user === undefined) return <div className="app-loading" />

@@ -51,14 +51,16 @@ export default function DrinkTracker() {
       { userId: user.uid, username, [drinkId]: increment(delta), updatedAt: serverTimestamp() },
       { merge: true }
     )
+    if (delta > 0) {
+      const drink = DRINKS.find(d => d.id === drinkId)
+      setToast(`${drink.emoji} ${drink.label} afegit!`)
+      setTimeout(() => setToast(null), 2500)
+    }
   }
 
   async function addOneDrink(drinkId) {
     await addDrink(drinkId, 1)
     setShowSheet(false)
-    const drink = DRINKS.find(d => d.id === drinkId)
-    setToast(`${drink.emoji} ${drink.label} afegit!`)
-    setTimeout(() => setToast(null), 2500)
   }
 
   const myDoc = allDrinks.find(d => d.id === user.uid) ?? {}
