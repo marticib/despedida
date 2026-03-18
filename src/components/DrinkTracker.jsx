@@ -33,6 +33,7 @@ export default function DrinkTracker() {
   const { user } = useAuth()
   const [allDrinks, setAllDrinks] = useState([])
   const [showSheet, setShowSheet] = useState(false)
+  const [toast, setToast] = useState(null)
   const username = user?.displayName
 
   useEffect(() => {
@@ -55,6 +56,9 @@ export default function DrinkTracker() {
   async function addOneDrink(drinkId) {
     await addDrink(drinkId, 1)
     setShowSheet(false)
+    const drink = DRINKS.find(d => d.id === drinkId)
+    setToast(`${drink.emoji} ${drink.label} afegit!`)
+    setTimeout(() => setToast(null), 2500)
   }
 
   const myDoc = allDrinks.find(d => d.id === user.uid) ?? {}
@@ -131,6 +135,9 @@ export default function DrinkTracker() {
       <button className="drinks-fab" onClick={() => setShowSheet(true)} aria-label="Afegir drink">
         +
       </button>
+
+      {/* Toast */}
+      {toast && <div className="drinks-toast">{toast}</div>}
 
       {/* Bottom sheet — mobile only */}
       {showSheet && (

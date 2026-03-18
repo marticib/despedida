@@ -239,9 +239,41 @@
   display: none;
 }
 
+/* ── Toast ── */
+.drinks-toast {
+  position: fixed;
+  bottom: 6rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 500;
+  background: var(--yellow);
+  color: #111;
+  font-family: var(--heading);
+  font-size: 0.95rem;
+  letter-spacing: 0.06em;
+  padding: 0.65rem 1.5rem;
+  white-space: nowrap;
+  pointer-events: none;
+  animation: toast-in 0.2s ease, toast-out 0.3s ease 2.2s forwards;
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+@keyframes toast-out {
+  to { opacity: 0; transform: translateX(-50%) translateY(10px); }
+}
+
 @media (max-width: 768px) {
   /* Hide desktop grid on mobile */
   .drinks-mine .drinks-grid {
+    display: none;
+  }
+
+  /* Hide "els teus drinks, {username}" title on mobile */
+  .drinks-mine__title {
     display: none;
   }
 
