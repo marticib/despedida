@@ -1,0 +1,141 @@
+.login-page {
+  min-height: 100vh;
+  background: #111111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+}
+
+.login-box {
+  width: 100%;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.login-handle {
+  font-family: 'Courier New', monospace;
+  font-size: 0.78rem;
+  color: #888;
+  letter-spacing: 0.04em;
+}
+
+.login-title {
+  font-family: var(--heading);
+  font-size: clamp(3rem, 14vw, 6rem);
+  color: #fff;
+  line-height: 0.9;
+  letter-spacing: 0.02em;
+}
+
+.login-hint {
+  font-size: 0.75rem;
+  color: #888;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ── Username grid ── */
+.login-users {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.login-user-btn {
+  background: #1c1c1c;
+  border: 1px solid #333;
+  color: #fff;
+  font-family: var(--heading);
+  font-size: clamp(0.9rem, 3vw, 1.1rem);
+  letter-spacing: 0.06em;
+  padding: 0.55rem 1rem;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.login-user-btn:hover {
+  background: #252525;
+  border-color: var(--yellow);
+}
+
+.login-user-btn--active {
+  background: var(--yellow);
+  border-color: var(--yellow);
+  color: #111;
+}
+
+/* ── Form ── */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.login-input-wrap {
+  position: relative;
+}
+
+.login-input {
+  width: 100%;
+  background: #1c1c1c;
+  border: 1px solid #333;
+  border-left: 3px solid var(--yellow);
+  color: #fff;
+  font-family: var(--body);
+  font-size: 1rem;
+  padding: 0.85rem 1rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.login-input:focus {
+  border-color: var(--yellow);
+}
+
+.login-input:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.login-input::placeholder {
+  color: #555;
+  font-style: italic;
+}
+
+.login-error {
+  font-size: 0.82rem;
+  color: #ff4444;
+  letter-spacing: 0.03em;
+  padding: 0.5rem 0;
+}
+
+.login-submit {
+  background: var(--yellow);
+  border: none;
+  color: #111;
+  font-family: var(--heading);
+  font-size: clamp(0.9rem, 3vw, 1.1rem);
+  letter-spacing: 0.08em;
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.login-submit:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.login-submit:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.login-submit:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}

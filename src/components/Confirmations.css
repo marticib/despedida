@@ -1,0 +1,243 @@
+.confirmations {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ── Header ── */
+.confirmations__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.confirmations__title {
+  font-family: var(--heading);
+  font-size: clamp(2rem, 9vw, 3.8rem);
+  color: var(--white);
+  letter-spacing: 0.03em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.confirmations__title span {
+  color: var(--yellow);
+}
+
+.confirmations__meta {
+  font-size: 0.72rem;
+  color: #888;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ── My status box ── */
+.conf-mine {
+  background: #1c1c1c;
+  border-left: 3px solid var(--yellow);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.conf-mine__prompt {
+  font-size: 1rem;
+  color: var(--white);
+  line-height: 1.5;
+}
+
+.conf-mine__prompt strong {
+  color: var(--yellow);
+}
+
+.conf-mine__actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.conf-btn {
+  font-family: var(--heading);
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+}
+
+.conf-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.conf-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.conf-btn--yes {
+  background: var(--yellow);
+  color: #111;
+}
+
+.conf-btn--yes:hover:not(:disabled) {
+  opacity: 0.88;
+}
+
+.conf-btn--no {
+  background: transparent;
+  color: #888;
+  border: 1px solid #444;
+}
+
+.conf-btn--no:hover:not(:disabled) {
+  color: var(--white);
+  border-color: #666;
+}
+
+/* Current status */
+.conf-mine__status {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.conf-mine__badge {
+  font-family: var(--heading);
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  padding: 0.4rem 0.9rem;
+}
+
+.conf-mine__badge--yes {
+  background: var(--yellow);
+  color: #111;
+}
+
+.conf-mine__badge--no {
+  background: transparent;
+  border: 1px solid #555;
+  color: #888;
+}
+
+.conf-mine__change {
+  background: none;
+  border: none;
+  color: #555;
+  font-family: var(--body);
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.conf-mine__change:hover:not(:disabled) {
+  color: #ccc;
+}
+
+.conf-mine__change:disabled {
+  opacity: 0.3;
+}
+
+/* ── Users grid ── */
+.conf-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+}
+
+.conf-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.85rem 0.5rem;
+  background: #1c1c1c;
+  border: 1px solid #2a2a2a;
+  border-top: 2px solid transparent;
+  position: relative;
+  transition: border-top-color 0.3s;
+}
+
+.conf-card--yes {
+  border-top-color: var(--yellow);
+}
+
+.conf-card--no {
+  border-top-color: #555;
+}
+
+.conf-card--pending {
+  border-top-color: transparent;
+  opacity: 0.6;
+}
+
+.conf-card--me {
+  outline: 1px solid var(--yellow);
+}
+
+.conf-card__icon {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--yellow);
+  line-height: 1;
+}
+
+.conf-card--no .conf-card__icon {
+  color: #666;
+}
+
+.conf-card--pending .conf-card__icon {
+  color: #444;
+}
+
+.conf-card__name {
+  font-family: var(--heading);
+  font-size: clamp(0.6rem, 2.5vw, 0.75rem);
+  color: var(--white);
+  letter-spacing: 0.05em;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.conf-card__me-tag {
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  font-size: 0.5rem;
+  color: var(--yellow);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ── Logout ── */
+.conf-logout {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  color: #444;
+  font-family: var(--body);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.conf-logout:hover {
+  color: #888;
+}
+
+/* ── Responsive ── */
+@media (max-width: 400px) {
+  .conf-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

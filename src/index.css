@@ -1,0 +1,33 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --yellow:     #F5C400;
+  --yellow-dim: rgba(245, 196, 0, 0.14);
+  --white:      #ffffff;
+  --gray:       #888888;
+  --bg:         #111111;
+  --bg-card:    #1c1c1c;
+  --heading:    'Anton', Impact, sans-serif;
+  --body:       'Inter', system-ui, sans-serif;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--body);
+  background: var(--bg);
+  color: var(--white);
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100vh;
+}

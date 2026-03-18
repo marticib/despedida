@@ -1,0 +1,453 @@
+/* ═══════════════════════════════════════════
+   BENVINGUTS A LA DESPEDIDA
+   Instagram × J&B vibes
+   ═══════════════════════════════════════════ */
+
+.app {
+  position: relative;
+  min-height: 100vh;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+/* ── Particles canvas ── */
+.particles-canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Main layout ── */
+.main {
+  position: relative;
+  z-index: 1;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4rem;
+}
+
+/* ══ PROFILE HEADER ══════════════════════════ */
+.profile {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.25rem;
+  padding-top: 2.5rem;
+}
+
+.profile__handle {
+  font-family: 'Courier New', monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  color: var(--gray);
+}
+
+.profile__title {
+  font-family: var(--heading);
+  font-size: clamp(2.8rem, 14vw, 7rem);
+  line-height: 0.92;
+  letter-spacing: 0.02em;
+  color: var(--white);
+  text-transform: uppercase;
+}
+
+.profile__title em {
+  color: var(--yellow);
+  font-style: normal;
+}
+
+.profile__bio {
+  background: var(--bg-card);
+  border-left: 3px solid var(--yellow);
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.95rem;
+  color: var(--white);
+  line-height: 1.65;
+  width: 100%;
+  max-width: 400px;
+}
+
+.profile__bio-accent {
+  color: var(--yellow);
+  font-weight: 600;
+  margin-top: 0.3rem;
+}
+
+/* ══ CHARACTERS (choose your character) ═════ */
+.characters {
+  width: 100%;
+}
+
+.characters__header {
+  margin-bottom: 1.5rem;
+}
+
+.characters__title {
+  font-family: var(--heading);
+  font-size: clamp(2rem, 9vw, 3.8rem);
+  color: var(--yellow);
+  letter-spacing: 0.03em;
+  line-height: 1;
+  margin-bottom: 0.4rem;
+}
+
+.characters__sub {
+  font-size: 0.85rem;
+  color: var(--gray);
+  font-style: italic;
+  letter-spacing: 0.02em;
+}
+
+.characters__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.char-card {
+  background: var(--bg-card);
+  border: 1px solid rgba(245, 196, 0, 0.12);
+  border-top: 2px solid transparent;
+  padding: 1.25rem 0.75rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  text-align: center;
+  cursor: default;
+  transition: transform 0.2s ease, border-color 0.2s ease,
+              border-top-color 0.2s ease;
+}
+
+.char-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(245, 196, 0, 0.3);
+  border-top-color: var(--yellow);
+}
+
+.char-card__icon {
+  font-size: 2.2rem;
+  margin-bottom: 0.2rem;
+}
+
+.char-card__name {
+  font-family: var(--heading);
+  font-size: clamp(0.72rem, 2.8vw, 0.95rem);
+  letter-spacing: 0.06em;
+  color: var(--yellow);
+  text-transform: uppercase;
+  line-height: 1.15;
+}
+
+.char-card__quote {
+  font-size: 0.72rem;
+  color: var(--white);
+  font-style: italic;
+  opacity: 0.85;
+}
+
+.char-card__desc {
+  font-size: 0.68rem;
+  color: var(--gray);
+  line-height: 1.55;
+}
+
+/* ══ COUNTDOWN SECTION ═══════════════════════ */
+.countdown-section {
+  width: 100%;
+}
+
+.countdown-section__title {
+  font-family: var(--heading);
+  font-size: clamp(2rem, 9vw, 3.8rem);
+  color: var(--white);
+  letter-spacing: 0.03em;
+  line-height: 1;
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+}
+
+.countdown-section__title span {
+  color: var(--yellow);
+}
+
+.countdown-section__date {
+  font-size: 0.78rem;
+  color: var(--gray);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+}
+
+/* ══ FOOTER ══════════════════════════════════ */
+.footer {
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--gray);
+  letter-spacing: 0.05em;
+  padding-bottom: 2rem;
+  font-style: italic;
+}
+
+/* Loading splash */
+.app-loading {
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+/* ══ RESPONSIVE ══════════════════════════════ */
+@media (max-width: 500px) {
+  .characters__grid {
+    grid-template-columns: 1fr;
+    max-width: 300px;
+    margin: 0 auto;
+  }
+
+  .profile__bio {
+    max-width: 100%;
+  }
+}
+
+.ornament--flip {
+  transform: scaleX(-1);
+}
+
+.ornament__line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold-dim));
+}
+
+.ornament--flip .ornament__line {
+  background: linear-gradient(to left, transparent, var(--gold-dim));
+}
+
+.ornament__diamond {
+  width: 6px;
+  height: 6px;
+  background: var(--gold);
+  transform: rotate(45deg);
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+/* ── Hero ── */
+.hero {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.hero__eyebrow {
+  font-family: var(--sans);
+  font-size: clamp(0.7rem, 2vw, 0.85rem);
+  font-weight: 500;
+  letter-spacing: 0.45rem;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.8;
+}
+
+.title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+  user-select: none;
+  gap: 0.1em;
+}
+
+.title__pre {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(2rem, 8vw, 4.5rem);
+  color: var(--ivory-muted);
+  letter-spacing: 0.3rem;
+}
+
+.title__main {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(3.5rem, 15vw, 9rem);
+  letter-spacing: 0.12em;
+  line-height: 0.95;
+  background: linear-gradient(
+    160deg,
+    #e8c878 0%,
+    #C4984A 40%,
+    #f5e8bc 65%,
+    #C4984A 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% auto;
+  animation: shimmer 6s linear infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+.hero__sub {
+  font-family: var(--sans);
+  font-size: clamp(0.8rem, 2.5vw, 1rem);
+  font-weight: 300;
+  letter-spacing: 0.2rem;
+  text-transform: uppercase;
+  color: var(--ivory-muted);
+}
+
+/* ── Divider ── */
+.divider {
+  width: 100%;
+  max-width: 500px;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    var(--gold-dim) 30%,
+    var(--gold-dim) 70%,
+    transparent 100%
+  );
+}
+
+/* ── Label ── */
+.label {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.4rem;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.7;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* ── Friends ── */
+.friends-section {
+  width: 100%;
+  text-align: center;
+}
+
+.friends-grid {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.friend-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem 2.25rem;
+  min-width: 150px;
+  background: var(--bg-card);
+  border: 1px solid var(--gold-dim);
+  cursor: default;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 0.4s ease,
+              box-shadow 0.4s ease;
+}
+
+.friend-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(196, 152, 74, 0.6);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5),
+              0 0 30px rgba(196, 152, 74, 0.08);
+}
+
+.friend-card__initial {
+  width: 56px;
+  height: 56px;
+  border: 1px solid var(--gold-dim);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--serif);
+  font-size: 1.75rem;
+  font-weight: 400;
+  color: var(--gold-light);
+}
+
+.friend-card__name {
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.25rem;
+  text-transform: uppercase;
+  color: var(--ivory-muted);
+}
+
+/* ── Countdown section ── */
+.countdown-section {
+  width: 100%;
+  text-align: center;
+}
+
+.event-date {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(1rem, 3vw, 1.35rem);
+  font-weight: 300;
+  color: var(--ivory-muted);
+  letter-spacing: 0.05rem;
+  margin-bottom: 3rem;
+}
+
+/* ── Footer ── */
+.footer {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding-top: 1rem;
+}
+
+.footer__icon {
+  font-size: 1.5rem;
+  opacity: 0.6;
+}
+
+.footer__text {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 300;
+  letter-spacing: 0.3rem;
+  text-transform: uppercase;
+  color: var(--ivory-muted);
+}
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .main {
+    padding: 3.5rem 1.5rem 5rem;
+    gap: 3.5rem;
+  }
+
+  .friends-grid {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .friend-card {
+    width: 75%;
+  }
+}
