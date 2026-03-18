@@ -48,6 +48,24 @@ export default function MessageWall({ open, onOpenChange }) {
     }
   }, [open, messages.length])
 
+  // Lock body scroll when sidebar is open (prevents iOS page scroll on keyboard open)
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden'
+      document.body.style.position = 'fixed'
+      document.body.style.width = '100%'
+    } else {
+      document.body.style.overflow = ''
+      document.body.style.position = ''
+      document.body.style.width = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+      document.body.style.position = ''
+      document.body.style.width = ''
+    }
+  }, [open])
+
   // visualViewport: push form up when iOS keyboard opens
   useEffect(() => {
     if (!open) return
