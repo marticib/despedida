@@ -5,15 +5,15 @@
 }
 
 .photo-gallery__header {
-  text-align: center;
   margin-bottom: 2rem;
 }
 
 .photo-gallery__title {
-  font-family: 'Anton', sans-serif;
-  font-size: clamp(1.6rem, 5vw, 2.4rem);
+  font-family: var(--heading);
+  font-size: clamp(2rem, 9vw, 3.8rem);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
+  line-height: 1;
   color: var(--white);
   margin: 0 0 0.4rem;
 }
@@ -23,8 +23,10 @@
 }
 
 .photo-gallery__subtitle {
+  font-size: 0.75rem;
   color: var(--gray);
-  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   margin: 0;
 }
 
