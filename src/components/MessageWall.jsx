@@ -19,6 +19,7 @@ export default function MessageWall({ open, onOpenChange }) {
   const [sending, setSending] = useState(false)
   const [unread, setUnread] = useState(0)
   const listRef = useRef(null)
+  const inputRef = useRef(null)
   const lastSeenCount = useRef(0)
 
   const username = user?.displayName ?? user?.email?.split('@')[0] ?? 'Anònim'
@@ -60,6 +61,8 @@ export default function MessageWall({ open, onOpenChange }) {
     e.preventDefault()
     const trimmed = text.trim()
     if (!trimmed || !user) return
+    // Blur first so iOS keyboard closes and viewport resets before scroll
+    inputRef.current?.blur()
     setSending(true)
     try {
       await addDoc(collection(db, 'messages'), {
@@ -69,6 +72,10 @@ export default function MessageWall({ open, onOpenChange }) {
         timestamp: serverTimestamp(),
       })
       setText('')
+      // Wait for keyboard to close + viewport to settle, then scroll
+      setTimeout(() => {
+        listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: 'smooth' })
+      }, 350)
     } catch (err) {
       console.error(err)
     } finally {
@@ -124,6 +131,7 @@ export default function MessageWall({ open, onOpenChange }) {
 
         <form className="msg-form" onSubmit={handleSend}>
           <input
+            ref={inputRef}
             className="msg-form__input"
             type="text"
             placeholder="Escriu un missatge..."
