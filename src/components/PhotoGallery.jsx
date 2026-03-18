@@ -25,6 +25,7 @@ export default function PhotoGallery() {
   const [preview, setPreview] = useState(null)
   const [showUploadSheet, setShowUploadSheet] = useState(false)
   const [showFabMenu, setShowFabMenu] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(null)
   const [toast, setToast] = useState(null)
   const fileInputRef = useRef(null)
   const cameraInputRef = useRef(null)
@@ -130,6 +131,7 @@ export default function PhotoGallery() {
 
   async function deletePhoto(photo) {
     if (!user || photo.uploadedBy !== user.uid) return
+    setConfirmDelete(null)
     try {
       await deleteDoc(doc(db, 'photos', photo.id))
       showToast('Foto eliminada')
@@ -238,7 +240,7 @@ export default function PhotoGallery() {
                     {isOwner && (
                       <button
                         className="photo-card__delete"
-                        onClick={() => deletePhoto(photo)}
+                        onClick={() => setConfirmDelete(photo)}
                         title="Eliminar foto"
                       >
                         🗑️
@@ -254,8 +256,14 @@ export default function PhotoGallery() {
 
       {/* Upload bottom sheet */}
       {showUploadSheet && (
-        <div className="photo-sheet-overlay" onClick={cancelUpload}>
+        <div className="photo-sheet-overlay" onClick={!uploading ? cancelUpload : undefined}>
           <div className="photo-sheet" onClick={(e) => e.stopPropagation()}>
+            {uploading && (
+              <div className="photo-sheet__loader">
+                <div className="photo-sheet__spinner" />
+                <span>Pujant foto...</span>
+              </div>
+            )}
             <div className="photo-sheet__handle" />
             <h3 className="photo-sheet__title">Penjar foto</h3>
             {preview && (
@@ -268,6 +276,7 @@ export default function PhotoGallery() {
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
               maxLength={100}
+              disabled={uploading}
             />
             <div className="photo-sheet__btns">
               <button
@@ -282,7 +291,32 @@ export default function PhotoGallery() {
                 onClick={handleUpload}
                 disabled={uploading}
               >
-                {uploading ? 'Pujant...' : 'Penjar 🚀'}
+                Penjar 🚀
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete confirm modal */}
+      {confirmDelete && (
+        <div className="photo-confirm-overlay" onClick={() => setConfirmDelete(null)}>
+          <div className="photo-confirm" onClick={(e) => e.stopPropagation()}>
+            <p className="photo-confirm__icon">🗑️</p>
+            <h3 className="photo-confirm__title">Eliminar foto?</h3>
+            <p className="photo-confirm__text">Aquesta acció no es pot desfer.</p>
+            <div className="photo-confirm__btns">
+              <button
+                className="photo-confirm__btn photo-confirm__btn--cancel"
+                onClick={() => setConfirmDelete(null)}
+              >
+                Cancel·lar
+              </button>
+              <button
+                className="photo-confirm__btn photo-confirm__btn--delete"
+                onClick={() => deletePhoto(confirmDelete)}
+              >
+                Eliminar
               </button>
             </div>
           </div>
