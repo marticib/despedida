@@ -33,7 +33,7 @@
 
 @media (max-width: 600px) {
   .main {
-    padding: 7rem 1.25rem 5rem !important;
+    padding: 5rem 1.25rem 5rem !important;
     gap: 3rem;
   }
 }
@@ -523,7 +523,7 @@
 /* ── Responsive ── */
 @media (max-width: 480px) {
   .main {
-    padding: 7rem 1rem 5rem !important;
+    padding: 5rem 1rem 5rem !important;
     gap: 2.5rem;
   }
 

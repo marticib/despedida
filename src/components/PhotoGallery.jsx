@@ -16,7 +16,7 @@ import { db } from '../lib/firebase.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import './PhotoGallery.css'
 
-export default function PhotoGallery() {
+export default function PhotoGallery({ hideFab = false }) {
   const { user } = useAuth()
   const [photos, setPhotos] = useState([])
   const [uploading, setUploading] = useState(false)
@@ -156,7 +156,7 @@ export default function PhotoGallery() {
       {showFabMenu && (
         <div className="photo-gallery__fab-overlay" onClick={() => setShowFabMenu(false)} />
       )}
-      <div className="photo-gallery__fab-group">
+      <div className={`photo-gallery__fab-group${hideFab ? ' photo-gallery__fab-group--hidden' : ''}`}>
         {showFabMenu && (
           <>
             <button

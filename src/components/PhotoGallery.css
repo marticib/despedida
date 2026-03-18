@@ -37,6 +37,10 @@
   z-index: 99;
 }
 
+.photo-gallery__fab-group--hidden {
+  display: none !important;
+}
+
 .photo-gallery__fab-group {
   position: fixed;
   bottom: 2rem;

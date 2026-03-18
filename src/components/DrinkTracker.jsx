@@ -36,7 +36,7 @@ function getStatus(score) {
   return [...HANGOVER_LEVELS].reverse().find(l => score >= l.min) ?? HANGOVER_LEVELS[0]
 }
 
-export default function DrinkTracker() {
+export default function DrinkTracker({ hideFab = false }) {
   const { user } = useAuth()
   const [allDrinks, setAllDrinks] = useState([])
   const [showSheet, setShowSheet] = useState(false)
@@ -182,9 +182,11 @@ export default function DrinkTracker() {
       </div>
 
       {/* FAB — mobile only */}
-      <button className="drinks-fab" onClick={() => setShowSheet(true)} aria-label="Afegir drink">
-        +
-      </button>
+      {!hideFab && (
+        <button className="drinks-fab" onClick={() => setShowSheet(true)} aria-label="Afegir drink">
+          🍺
+        </button>
+      )}
 
       {/* Toast */}
       {toast && <div className="drinks-toast">{toast}</div>}

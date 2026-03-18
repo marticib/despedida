@@ -4,6 +4,7 @@ import Particles from './components/Particles.jsx'
 import LoginPage from './components/LoginPage.jsx'
 import DrinkTracker from './components/DrinkTracker.jsx'
 import PhotoGallery from './components/PhotoGallery.jsx'
+import MessageWall from './components/MessageWall.jsx'
 import { useAuth } from './context/AuthContext.jsx'
 import './App.css'
 
@@ -46,6 +47,7 @@ export default function App() {
   const { user } = useAuth()
   const [targetDate] = useState(() => new Date(2026, 6, 17, 20, 0, 0, 0))
   const [showLogin, setShowLogin] = useState(false)
+  const [msgOpen, setMsgOpen] = useState(false)
 
   if (user === undefined) return <div className="app-loading" />
   if (showLogin && !user) return <LoginPage onBack={() => setShowLogin(false)} />
@@ -65,8 +67,9 @@ export default function App() {
       <main className="main">
         {user ? (
           <>
-            <DrinkTracker />
-            <PhotoGallery />
+            <DrinkTracker hideFab={msgOpen} />
+            <PhotoGallery hideFab={msgOpen} />
+            <MessageWall open={msgOpen} onOpenChange={setMsgOpen} />
           </>
         ) : (
           <>
