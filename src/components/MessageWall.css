@@ -54,7 +54,7 @@
   position: fixed;
   top: 57px;
   left: 0;
-  height: calc(100dvh - 57px);
+  bottom: 0;
   width: min(340px, 90vw);
   background: #161616;
   border-right: 1px solid rgba(255, 255, 255, 0.07);

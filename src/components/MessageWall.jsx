@@ -20,6 +20,7 @@ export default function MessageWall({ open, onOpenChange }) {
   const [unread, setUnread] = useState(0)
   const listRef = useRef(null)
   const inputRef = useRef(null)
+  const formRef = useRef(null)
   const lastSeenCount = useRef(0)
 
   const username = user?.displayName ?? user?.email?.split('@')[0] ?? 'Anònim'
@@ -47,15 +48,24 @@ export default function MessageWall({ open, onOpenChange }) {
     }
   }, [open, messages.length])
 
+  // visualViewport: push form up when iOS keyboard opens
   useEffect(() => {
-    if (open && listRef.current) {
-      const el = listRef.current
-      const isNearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 120
-      if (isNearBottom) {
-        el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
-      }
+    if (!open) return
+    const vv = window.visualViewport
+    if (!vv) return
+    function onViewport() {
+      if (!formRef.current) return
+      const offset = window.innerHeight - vv.height - vv.offsetTop
+      formRef.current.style.transform = offset > 0 ? `translateY(-${offset}px)` : ''
     }
-  }, [messages])
+    vv.addEventListener('resize', onViewport)
+    vv.addEventListener('scroll', onViewport)
+    return () => {
+      vv.removeEventListener('resize', onViewport)
+      vv.removeEventListener('scroll', onViewport)
+      if (formRef.current) formRef.current.style.transform = ''
+    }
+  }, [open])
 
   async function handleSend(e) {
     e.preventDefault()
@@ -129,7 +139,7 @@ export default function MessageWall({ open, onOpenChange }) {
           })}
         </ul>
 
-        <form className="msg-form" onSubmit={handleSend}>
+        <form className="msg-form" ref={formRef} onSubmit={handleSend}>
           <input
             ref={inputRef}
             className="msg-form__input"
