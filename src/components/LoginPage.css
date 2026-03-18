@@ -7,6 +7,25 @@
   padding: 2rem 1.5rem;
 }
 
+.login-back {
+  position: fixed;
+  top: 1rem;
+  left: 1.25rem;
+  background: none;
+  border: none;
+  color: var(--gray);
+  font-family: var(--body);
+  font-size: 0.82rem;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  padding: 0.25rem 0;
+  transition: color 0.15s;
+}
+
+.login-back:hover {
+  color: var(--yellow);
+}
+
 .login-box {
   width: 100%;
   max-width: 460px;

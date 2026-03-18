@@ -4,7 +4,7 @@ import './LoginPage.css'
 
 const USERNAMES = ['Barto', 'Nis', 'Kevin', 'Lobo', 'Llar', 'Llouas', 'Nil', 'Dai', 'Eric', 'Ti']
 
-export default function LoginPage() {
+export default function LoginPage({ onBack }) {
   const [selected, setSelected] = useState(null)
   const [password, setPassword] = useState('')
   const [error, setError] = useState(null)
@@ -17,12 +17,21 @@ export default function LoginPage() {
     setLoading(true)
     setError(null)
     const err = await login(selected, password)
-    if (err) setError(err)
-    setLoading(false)
+    if (err) {
+      setError(err)
+      setLoading(false)
+    } else {
+      onBack?.()
+    }
   }
 
   return (
     <div className="login-page">
+      {onBack && (
+        <button className="login-back" onClick={onBack}>
+          ← tornar
+        </button>
+      )}
       <div className="login-box">
         <p className="login-handle">@benvinguts_a_la_despedida</p>
         <h1 className="login-title">QUI ETS?</h1>

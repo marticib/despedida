@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { supabase } from '../lib/supabase.js'
+import { auth } from '../lib/firebase.js'
+import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth'
 
 const AuthContext = createContext(null)
 
@@ -8,26 +9,22 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(undefined)
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
-    })
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
-    })
-
-    return () => subscription.unsubscribe()
+    const unsub = onAuthStateChanged(auth, (u) => setUser(u ?? null))
+    return unsub
   }, [])
 
   async function login(username, password) {
     const email = `${username.toLowerCase()}@despedida.local`
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) return 'Contrasenya incorrecta. Prova amb "password".'
-    return null
+    try {
+      await signInWithEmailAndPassword(auth, email, password)
+      return null
+    } catch {
+      return 'Contrasenya incorrecta. Prova amb "password".'
+    }
   }
 
   async function logout() {
-    await supabase.auth.signOut()
+    await signOut(auth)
   }
 
   return (

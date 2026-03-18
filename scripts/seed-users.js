@@ -1,32 +1,27 @@
 #!/usr/bin/env node
 // ================================================================
-// SEED SCRIPT — Crea els 10 usuaris a Supabase Auth
+// SEED SCRIPT — Crea els 10 usuaris a Firebase Auth
 //
 // Ús:
-//   SUPABASE_URL=https://xxx.supabase.co \
-//   SERVICE_ROLE_KEY=eyJ... \
+//   FIREBASE_SERVICE_ACCOUNT=/path/to/service-account.json \
 //   node scripts/seed-users.js
 //
-// La SERVICE_ROLE_KEY la trobes a:
-//   Supabase Dashboard → Settings → API → service_role (secret)
-//
-// IMPORTANT: Desactiva "Email Confirmation" abans d'executar:
-//   Supabase → Authentication → Providers → Email → Confirm email → OFF
+// El service account JSON el trobes a:
+//   Firebase Console → Project Settings → Service accounts
+//   → Generate new private key
 // ================================================================
 
-import { createClient } from '@supabase/supabase-js'
+import admin from 'firebase-admin'
+import { readFileSync } from 'fs'
 
-const SUPABASE_URL = process.env.SUPABASE_URL
-const SERVICE_ROLE_KEY = process.env.SERVICE_ROLE_KEY
-
-if (!SUPABASE_URL || !SERVICE_ROLE_KEY) {
-  console.error('Cal definir SUPABASE_URL i SERVICE_ROLE_KEY com a variables d\'entorn')
+const serviceAccountPath = process.env.FIREBASE_SERVICE_ACCOUNT
+if (!serviceAccountPath) {
+  console.error('Cal definir FIREBASE_SERVICE_ACCOUNT apuntant al JSON del service account')
   process.exit(1)
 }
 
-const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
-  auth: { autoRefreshToken: false, persistSession: false },
-})
+const serviceAccount = JSON.parse(readFileSync(serviceAccountPath, 'utf8'))
+admin.initializeApp({ credential: admin.credential.cert(serviceAccount) })
 
 const USERS = ['Barto', 'Nis', 'Kevin', 'Lobo', 'Llar', 'Llouas', 'Nil', 'Dai', 'Eric', 'Ti']
 const PASSWORD = 'password'
@@ -36,21 +31,20 @@ async function seed() {
 
   for (const name of USERS) {
     const email = `${name.toLowerCase()}@despedida.local`
-    const { data, error } = await supabase.auth.admin.createUser({
-      email,
-      password: PASSWORD,
-      email_confirm: true,
-      user_metadata: { username: name },
-    })
-
-    if (error) {
-      if (error.message.includes('already been registered')) {
+    try {
+      await admin.auth().createUser({
+        email,
+        password: PASSWORD,
+        displayName: name,
+        emailVerified: true,
+      })
+      console.log(`✅ ${name} (${email}) — creat`)
+    } catch (e) {
+      if (e.code === 'auth/email-already-exists') {
         console.log(`⚠️  ${name} (${email}) — ja existeix, saltant`)
       } else {
-        console.log(`❌ ${name}: ${error.message}`)
+        console.log(`❌ ${name}: ${e.message}`)
       }
-    } else {
-      console.log(`✅ ${name} (${email}) — creat`)
     }
   }
 

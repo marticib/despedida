@@ -235,6 +235,23 @@
   color: #888;
 }
 
+/* ── Login CTA (unauthenticated) ── */
+.conf-login-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: var(--bg-card);
+  border-left: 3px solid var(--yellow);
+}
+
+.conf-login-cta p {
+  font-size: 0.88rem;
+  color: var(--gray);
+  letter-spacing: 0.03em;
+}
+
 /* ── Responsive ── */
 @media (max-width: 400px) {
   .conf-grid {

@@ -1,63 +1,39 @@
 import { useEffect, useState } from 'react'
-import { supabase } from '../lib/supabase.js'
+import { collection, doc, onSnapshot, setDoc, serverTimestamp } from 'firebase/firestore'
+import { db } from '../lib/firebase.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import './Confirmations.css'
 
 const ALL_USERS = ['Barto', 'Nis', 'Kevin', 'Lobo', 'Llar', 'Llouas', 'Nil', 'Dai', 'Eric', 'Ti']
 
-export default function Confirmations() {
+export default function Confirmations({ onLoginClick }) {
   const { user, logout } = useAuth()
   const [confirmations, setConfirmations] = useState([])
   const [loaded, setLoaded] = useState(false)
   const [saving, setSaving] = useState(false)
 
-  const username = user?.user_metadata?.username
+  const username = user?.displayName
     ?? user?.email?.split('@')[0]?.replace(/^\w/, c => c.toUpperCase())
 
   useEffect(() => {
-    // Initial load
-    supabase.from('confirmations').select('*').then(({ data }) => {
-      if (data) setConfirmations(data)
+    const unsub = onSnapshot(collection(db, 'confirmations'), (snap) => {
+      setConfirmations(snap.docs.map(d => ({ id: d.id, ...d.data() })))
       setLoaded(true)
     })
-
-    // Real-time subscription
-    const channel = supabase
-      .channel('confirmations-live')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'confirmations' },
-        (payload) => {
-          setConfirmations(prev => {
-            if (payload.eventType === 'INSERT') return [...prev, payload.new]
-            if (payload.eventType === 'UPDATE') return prev.map(c => c.id === payload.new.id ? payload.new : c)
-            if (payload.eventType === 'DELETE') return prev.filter(c => c.id !== payload.old.id)
-            return prev
-          })
-        }
-      )
-      .subscribe()
-
-    return () => supabase.removeChannel(channel)
+    return unsub
   }, [])
 
   async function setAttendance(attending) {
     setSaving(true)
-    const existing = confirmations.find(c => c.user_id === user.id)
-    if (existing) {
-      await supabase
-        .from('confirmations')
-        .update({ attending, updated_at: new Date().toISOString() })
-        .eq('id', existing.id)
-    } else {
-      await supabase
-        .from('confirmations')
-        .insert({ user_id: user.id, username, attending })
-    }
+    await setDoc(
+      doc(db, 'confirmations', user.uid),
+      { userId: user.uid, username, attending, updatedAt: serverTimestamp() },
+      { merge: true }
+    )
     setSaving(false)
   }
 
-  const myRecord = loaded ? (confirmations.find(c => c.user_id === user.id) ?? null) : undefined
+  const myRecord = loaded && user ? (confirmations.find(c => c.userId === user.uid) ?? null) : undefined
   const confirmed = confirmations.filter(c => c.attending === true).length
 
   return (
@@ -69,8 +45,18 @@ export default function Confirmations() {
         </p>
       </div>
 
-      {/* My status */}
-      {loaded && (
+      {/* Login CTA if not authenticated */}
+      {!user && (
+        <div className="conf-login-cta">
+          <p>Inicia sessi\u00f3 per confirmar la teva assist\u00e8ncia</p>
+          <button className="conf-btn conf-btn--yes" onClick={onLoginClick}>
+            INICIAR SESSI\u00d3 →
+          </button>
+        </div>
+      )}
+
+      {/* My status — only when logged in */}
+      {user && loaded && (
         <div className="conf-mine">
           {myRecord === null && (
             <>
@@ -137,9 +123,11 @@ export default function Confirmations() {
         })}
       </div>
 
-      <button className="conf-logout" onClick={logout}>
-        sortir ({username})
-      </button>
+      {user && (
+        <button className="conf-logout" onClick={logout}>
+          sortir ({username})
+        </button>
+      )}
     </section>
   )
 }
