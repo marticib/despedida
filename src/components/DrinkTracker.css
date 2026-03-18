@@ -31,6 +31,36 @@
   text-transform: uppercase;
 }
 
+/* ── Tabs ── */
+.drinks-tabs {
+  display: flex;
+  gap: 0;
+  border: 1px solid #333;
+  width: fit-content;
+}
+
+.drinks-tab {
+  background: transparent;
+  border: none;
+  color: var(--gray);
+  font-family: var(--heading);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.55rem 1.25rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.drinks-tab:hover {
+  color: var(--white);
+}
+
+.drinks-tab--active {
+  background: var(--yellow);
+  color: #111;
+}
+
 /* ── Ranking ── */
 .drinks-ranking {
   display: flex;

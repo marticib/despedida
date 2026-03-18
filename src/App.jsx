@@ -3,6 +3,7 @@ import Countdown from './components/Countdown.jsx'
 import Particles from './components/Particles.jsx'
 import LoginPage from './components/LoginPage.jsx'
 import DrinkTracker from './components/DrinkTracker.jsx'
+import PhotoGallery from './components/PhotoGallery.jsx'
 import { useAuth } from './context/AuthContext.jsx'
 import './App.css'
 
@@ -65,6 +66,7 @@ export default function App() {
         {user ? (
           <>
             <DrinkTracker />
+            <PhotoGallery />
           </>
         ) : (
           <>

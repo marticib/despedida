@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { collection, doc, onSnapshot, setDoc, increment, serverTimestamp } from 'firebase/firestore'
+import { collection, doc, onSnapshot, setDoc, updateDoc, increment, serverTimestamp } from 'firebase/firestore'
 import { db } from '../lib/firebase.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import './DrinkTracker.css'
@@ -13,8 +13,15 @@ const DRINKS = [
   { id: 'whisky',  label: 'Whisky sol',   emoji: '🥃', pts: 2 },
 ]
 
-function calcScore(entry) {
-  return DRINKS.reduce((sum, d) => sum + (entry[d.id] ?? 0) * d.pts, 0)
+// Dia actual: canvia a les 10:00 del matí
+function getCurrentDay() {
+  const now = new Date()
+  if (now.getHours() < 10) now.setDate(now.getDate() - 1)
+  return now.toISOString().split('T')[0] // 'YYYY-MM-DD'
+}
+
+function calcScore(counts) {
+  return DRINKS.reduce((sum, d) => sum + ((counts?.[d.id] ?? 0) * d.pts), 0)
 }
 
 const HANGOVER_LEVELS = [
@@ -34,6 +41,7 @@ export default function DrinkTracker() {
   const [allDrinks, setAllDrinks] = useState([])
   const [showSheet, setShowSheet] = useState(false)
   const [toast, setToast] = useState(null)
+  const [view, setView] = useState('daily') // 'daily' | 'total'
   const username = user?.displayName
 
   useEffect(() => {
@@ -44,13 +52,29 @@ export default function DrinkTracker() {
   }, [])
 
   async function addDrink(drinkId, delta) {
-    const myDoc = allDrinks.find(d => d.id === user.uid) ?? {}
-    if (delta < 0 && (myDoc[drinkId] ?? 0) === 0) return
-    await setDoc(
-      doc(db, 'drinks', user.uid),
-      { userId: user.uid, username, [drinkId]: increment(delta), updatedAt: serverTimestamp() },
-      { merge: true }
-    )
+    const myEntry = allDrinks.find(d => d.id === user.uid)
+    if (delta < 0 && (myEntry?.total?.[drinkId] ?? 0) === 0) return
+
+    const day = getCurrentDay()
+    const ref = doc(db, 'drinks', user.uid)
+
+    if (!myEntry) {
+      await setDoc(ref, { userId: user.uid, username, total: {}, days: {} })
+    }
+
+    const updates = {
+      userId: user.uid,
+      username,
+      [`total.${drinkId}`]: increment(delta),
+      updatedAt: serverTimestamp(),
+    }
+    // Decrement daily only if there's count today, always increment
+    if (delta > 0 || (myEntry?.days?.[day]?.[drinkId] ?? 0) > 0) {
+      updates[`days.${day}.${drinkId}`] = increment(delta)
+    }
+
+    await updateDoc(ref, updates)
+
     if (delta > 0) {
       const drink = DRINKS.find(d => d.id === drinkId)
       setToast(`${drink.emoji} ${drink.label} afegit!`)
@@ -63,10 +87,20 @@ export default function DrinkTracker() {
     setShowSheet(false)
   }
 
-  const myDoc = allDrinks.find(d => d.id === user.uid) ?? {}
+  const day = getCurrentDay()
+  const myEntry = allDrinks.find(d => d.id === user.uid) ?? {}
+  const myCounts = view === 'daily' ? (myEntry.days?.[day] ?? {}) : (myEntry.total ?? {})
+
   const ranking = [...allDrinks]
-    .filter(d => calcScore(d) > 0)
-    .sort((a, b) => calcScore(b) - calcScore(a))
+    .map(entry => ({
+      ...entry,
+      _score: view === 'daily'
+        ? calcScore(entry.days?.[day] ?? {})
+        : calcScore(entry.total ?? {}),
+      _counts: view === 'daily' ? (entry.days?.[day] ?? {}) : (entry.total ?? {}),
+    }))
+    .filter(e => e._score > 0)
+    .sort((a, b) => b._score - a._score)
 
   return (
     <section className="drinks">
@@ -75,18 +109,32 @@ export default function DrinkTracker() {
         <p className="drinks__sub">birra/vi/cava 1pt · cubata/whisky 2pt · xupito 3pt</p>
       </div>
 
+      {/* Tab toggle */}
+      <div className="drinks-tabs">
+        <button
+          className={`drinks-tab ${view === 'daily' ? 'drinks-tab--active' : ''}`}
+          onClick={() => setView('daily')}
+        >avui</button>
+        <button
+          className={`drinks-tab ${view === 'total' ? 'drinks-tab--active' : ''}`}
+          onClick={() => setView('total')}
+        >total despedida</button>
+      </div>
+
       {/* Ranking */}
       <div className="drinks-ranking">
         {ranking.length === 0 ? (
-          <p className="drinks-ranking__empty">ningú ha begut res encara 😇</p>
+          <p className="drinks-ranking__empty">
+            {view === 'daily' ? 'ningú ha begut res avui 😇' : 'ningú ha begut res encara 😇'}
+          </p>
         ) : (
           ranking.map((entry, i) => {
             const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}.`
             const breakdown = DRINKS
-              .filter(d => entry[d.id] > 0)
-              .map(d => `${entry[d.id]}×${d.emoji}`)
+              .filter(d => (entry._counts[d.id] ?? 0) > 0)
+              .map(d => `${entry._counts[d.id]}×${d.emoji}`)
               .join('  ')
-            const status = getStatus(calcScore(entry))
+            const status = getStatus(entry._score)
             return (
               <div
                 key={entry.id}
@@ -98,18 +146,18 @@ export default function DrinkTracker() {
                   <span className="drinks-rank-row__status">{status.emoji} {status.label}</span>
                 </div>
                 <span className="drinks-rank-row__breakdown">{breakdown}</span>
-                <span className="drinks-rank-row__score">{calcScore(entry)} pts</span>
+                <span className="drinks-rank-row__score">{entry._score} pts</span>
               </div>
             )
           })
         )}
       </div>
 
-      {/* My counters */}
+      {/* My counters — desktop */}
       <div className="drinks-mine">
         <h3 className="drinks-mine__title">els teus drinks, <span>{username}</span></h3>
         <div className="drinks-mine__status">
-          {(() => { const s = getStatus(calcScore(myDoc)); return <><span className="drinks-mine__status-emoji">{s.emoji}</span><span>{s.label}</span></> })()}
+          {(() => { const s = getStatus(calcScore(myCounts)); return <><span className="drinks-mine__status-emoji">{s.emoji}</span><span>{s.label}</span></> })()}
         </div>
         <div className="drinks-grid">
           {DRINKS.map(drink => (
@@ -120,9 +168,9 @@ export default function DrinkTracker() {
                 <button
                   className="drink-btn drink-btn--minus"
                   onClick={() => addDrink(drink.id, -1)}
-                  disabled={(myDoc[drink.id] ?? 0) === 0}
+                  disabled={(myEntry.total?.[drink.id] ?? 0) === 0}
                 >−</button>
-                <span className="drink-card__count">{myDoc[drink.id] ?? 0}</span>
+                <span className="drink-card__count">{myEntry.total?.[drink.id] ?? 0}</span>
                 <button
                   className="drink-btn drink-btn--plus"
                   onClick={() => addDrink(drink.id, 1)}
@@ -156,8 +204,8 @@ export default function DrinkTracker() {
                 >
                   <span className="drinks-sheet__emoji">{drink.emoji}</span>
                   <span className="drinks-sheet__label">{drink.label}</span>
-                  {(myDoc[drink.id] ?? 0) > 0 && (
-                    <span className="drinks-sheet__count">{myDoc[drink.id]}</span>
+                  {(myEntry.total?.[drink.id] ?? 0) > 0 && (
+                    <span className="drinks-sheet__count">{myEntry.total?.[drink.id]}</span>
                   )}
                 </button>
               ))}
@@ -169,3 +217,4 @@ export default function DrinkTracker() {
     </section>
   )
 }
+
