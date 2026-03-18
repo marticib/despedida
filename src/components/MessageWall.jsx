@@ -21,7 +21,7 @@ export default function MessageWall({ open, onOpenChange }) {
   const listRef = useRef(null)
   const inputRef = useRef(null)
   const formRef = useRef(null)
-  const lastSeenCount = useRef(0)
+  const lastSeenCount = useRef(parseInt(localStorage.getItem('msg_seen') ?? '0', 10))
 
   const username = user?.displayName ?? user?.email?.split('@')[0] ?? 'Anònim'
 
@@ -41,6 +41,7 @@ export default function MessageWall({ open, onOpenChange }) {
   useEffect(() => {
     if (open) {
       lastSeenCount.current = messages.length
+      localStorage.setItem('msg_seen', String(messages.length))
       setUnread(0)
       setTimeout(() => {
         listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: 'smooth' })
